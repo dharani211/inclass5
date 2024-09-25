@@ -34,14 +34,13 @@ class _MyHomePageState extends State<MyHomePage> {
   String _cityName = '';
   double _temperature = 0.0;
   String _weatherCondition = '';
+  final List<Forecast> _forecastData = []; // List to store static forecast data
 
   void _fetchWeather() async {
     final cityName = _cityController.text;
 
-    // Generate random temperature between 15°C and 30°C
+    // Generate random temperature and weather condition
     final randomTemperature = Random().nextInt(16) + 15;
-
-    // Randomly select a weather condition
     final weatherConditions = ['Sunny', 'Cloudy', 'Rainy'];
     final randomWeatherCondition =
         weatherConditions[Random().nextInt(weatherConditions.length)];
@@ -50,7 +49,23 @@ class _MyHomePageState extends State<MyHomePage> {
       _cityName = cityName;
       _temperature = randomTemperature.toDouble();
       _weatherCondition = randomWeatherCondition;
+      _forecastData.clear(); // Clear previous forecast data
+      _forecastData.addAll(
+          _generateStaticForecast(cityName)); // Add static forecast data
     });
+  }
+
+  List<Forecast> _generateStaticForecast(String cityName) {
+    // Replace with your desired static forecast data
+    return [
+      Forecast(day: 'Mon', temperature: 20, condition: 'Sunny'),
+      Forecast(day: 'Tue', temperature: 22, condition: 'Cloudy'),
+      Forecast(day: 'Wed', temperature: 25, condition: 'Rainy'),
+      Forecast(day: 'Thu', temperature: 18, condition: 'Sunny'),
+      Forecast(day: 'Fri', temperature: 21, condition: 'Cloudy'),
+      Forecast(day: 'Sat', temperature: 23, condition: 'Sunny'),
+      Forecast(day: 'Sun', temperature: 19, condition: 'Cloudy'),
+    ];
   }
 
   @override
@@ -69,9 +84,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 hintText: 'Enter city name',
               ),
             ),
-            ElevatedButton(
-              onPressed: _fetchWeather,
-              child: const Text('Fetch Weather'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: _fetchWeather,
+                  child: const Text('Fetch Weather'),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () => setState(() => _forecastData.clear()),
+                  child: const Text('Clear Forecast'),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             Text(
@@ -86,9 +111,38 @@ class _MyHomePageState extends State<MyHomePage> {
               'Weather Condition: $_weatherCondition',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            const SizedBox(height: 20),
+            Text(
+              '7-Day Forecast',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            Expanded(
+              child: _forecastData.isEmpty
+                  ? const Center(child: Text('No forecast data available'))
+                  : ListView.builder(
+                      itemCount: _forecastData.length,
+                      itemBuilder: (context, index) {
+                        final forecast = _forecastData[index];
+                        return ListTile(
+                          title: Text(forecast.day),
+                          subtitle: Text(
+                              '${forecast.temperature}°C - ${forecast.condition}'),
+                        );
+                      },
+                    ),
+            ),
           ],
         ),
       ),
     );
   }
+}
+
+class Forecast {
+  final String day;
+  final double temperature;
+  final String condition;
+
+  Forecast(
+      {required this.day, required this.temperature, required this.condition});
 }
