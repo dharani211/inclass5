@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -35,12 +36,20 @@ class _MyHomePageState extends State<MyHomePage> {
   String _weatherCondition = '';
 
   void _fetchWeather() async {
-    // Replace with actual weather API call
-    // ...
+    final cityName = _cityController.text;
+
+    // Generate random temperature between 15°C and 30°C
+    final randomTemperature = Random().nextInt(16) + 15;
+
+    // Randomly select a weather condition
+    final weatherConditions = ['Sunny', 'Cloudy', 'Rainy'];
+    final randomWeatherCondition =
+        weatherConditions[Random().nextInt(weatherConditions.length)];
+
     setState(() {
-      _cityName = _cityController.text;
-      _temperature = 25.0; // Replace with actual temperature
-      _weatherCondition = 'Sunny'; // Replace with actual weather condition
+      _cityName = cityName;
+      _temperature = randomTemperature.toDouble();
+      _weatherCondition = randomWeatherCondition;
     });
   }
 
